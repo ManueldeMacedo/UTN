@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <h1>Iniciar Sesión</h1>
+
+    <p>Por favor, ingresa tus credenciales para iniciar sesión:</p>
+
+    <form action="procesar_login.php" method="POST">
+        <label for="usuario">Usuario:</label>
+        <input type="text" id="usuario" name="usuario" required>
+        <br><br>
+
+        <label for="clave">Contraseña:</label>
+        <input type="password" id="clave" name="clave" required>
+        <br><br>
+
+        <label for="recordar">Recordar datos de usuario:</label>
+        <input type="checkbox" id="recordar" name="recordar">
+        <br><br>
+
+        <input type="submit" value="Iniciar Sesión">
+    
+</body>
+</html>
