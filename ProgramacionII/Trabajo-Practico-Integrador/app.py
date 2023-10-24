@@ -138,6 +138,7 @@ def cursos_alumno(estudiante):
             print("Opción no válida. Ingrese una opción numérica")
 
 
+
 def validar_profesor():
 
     bandera=0    
@@ -149,6 +150,7 @@ def validar_profesor():
             contrasenia = input("Ingrese su contraseña: ")
             if profesor.contrasenia == contrasenia:
                 print(f'Bienvenido/a {profesor.nombre}')
+                menu_profesor(profesor)
                 break
             else:
                 print("Error de ingreso. Contraseña inválida.")
@@ -156,6 +158,79 @@ def validar_profesor():
     if bandera==0:
         print("Correo electrónico no encontrado. Debe darse de alta en alumnado.")
 
+
+def menu_profesor(profesor):
+    while True:
+        print("\nMenú de Profesor:")
+        print("1. Dictar un curso")
+        print("2. Ver curso")
+        print("3. Volver al menú principal")
+
+        opt = input("\nIngrese la opción de menú: ")
+        if opt.isnumeric():
+            if int(opt) == 1:
+                dictar_curso(profesor)
+            elif int(opt) == 2:
+                cursos_profesor(profesor)
+            elif int(opt) == 3:
+                print("Saliendo del menú de Profesor...")
+                break
+          
+            else:
+                print("Opción no válida. Por favor, seleccione una opción válida.")
+        else:
+            print("Opción no válida. Ingrese una opción numérica")
+
+def dictar_curso(profesor):
+     while True:
+        cursos_ordenados = sorted(cursos, key=lambda curso: curso.nombre)
+        for indice, curso in enumerate(cursos_ordenados, 1):
+            print(f"{indice} {curso.nombre}")
+
+        opt = input("\nIngrese el curso: ")
+        if opt.isnumeric():
+            opt=int(opt)
+            if opt<=len(cursos):
+                if cursos_ordenados[opt-1].nombre in profesor.cursos:
+                    print(f"Ya estás matriculado en {cursos_ordenados[opt-1].nombre}.")
+                else:
+                    profesor.cursos.append(cursos_ordenados[opt-1].nombre)
+                    print("Se ha registrado correctamente su matriculación")
+                    print(f"Nombre: {cursos_ordenados[opt-1].nombre}")
+                    print(f"Contraseña: {cursos_ordenados[opt-1].contrasenia_matriculacion} ")
+                break
+            else:
+                print("Opción no válida. Por favor, seleccione una opción válida.")
+        else:
+            print("Opción no válida. Ingrese una opción numérica")
+
+def cursos_profesor(profesor):
+    
+    if len(profesor.cursos)==0:
+        print("Todavía no posee cursos matriculados.")
+        return
+    
+    while True:
+        for indice, curso in enumerate(profesor.cursos, 1):
+            print(f"{indice} {curso}")
+
+        opt = input("\nIngrese el curso: ")
+        if opt.isnumeric():
+            opt=int(opt)
+            if opt<=len(profesor.cursos):
+                print(f"Nombre: {profesor.cursos[opt-1]}")
+                for curso in cursos:
+                    if profesor.cursos[opt-1] == curso.nombre:
+                         print(f"Contraseña: {curso.contrasenia_matriculacion} ")
+
+
+                break
+            else:
+                print("Opción no válida. Por favor, seleccione una opción válida.")
+        else:
+            print("Opción no válida. Ingrese una opción numérica")
+
+    
 
 def ver_cursos():
     cursos_ordenados = sorted(cursos, key=lambda curso: curso.nombre)
