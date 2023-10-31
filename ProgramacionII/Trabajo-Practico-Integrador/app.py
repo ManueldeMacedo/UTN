@@ -2,37 +2,18 @@ from Estudiante import *
 from Profesor import *
 from Usuario import *
 from Curso import *
-
-cursos = [
-    Curso("Ingles I"),
-    Curso("Ingles II"),
-    Curso("Laboratorio I"),
-    Curso("Laboratorio II"),
-    Curso("Programacion I"),
-    Curso("Programacion II")
-]
-
-estudiantes = [
-    Estudiante("Manuel", "De Macedo", "manuel.demacedo@example.com", "contrasenia1", "12345", 2020),
-    Estudiante("Luciano", "Brion", "luciano.brion@example.com", "contrasenia2", "54321", 2019),
-    Estudiante("Brian", "Gerez", "brian.gerez@example.com", "contrasenia3", "98765", 2022)
-]
-
-profesores = [
-    Profesor("Profesor1", "Apellido1", "profesor1@example.com", "contrasenia1", "Licenciado en Informática", 2010),
-    Profesor("Profesor2", "Apellido2", "profesor2@example.com", "contrasenia2", "Doctor en Matemáticas", 2015)
-]
+import datos
 
 def validar_alumno():
 
     bandera=0
     email=input("Ingrese su email: ")
 
-    for estudiante in estudiantes:
+    for estudiante in datos.estudiantes:
         if estudiante.email == email:
             bandera=1
             contrasenia = input("Ingrese su contraseña: ")
-            if estudiante.contrasenia == contrasenia:
+            if estudiante.validar_credenciales(email, contrasenia):
                 print(f'Bienvenido/a {estudiante.nombre}')
                 menu_alumno(estudiante)
                 break
@@ -43,7 +24,7 @@ def validar_alumno():
         print("Correo electrónico no encontrado. Debe darse de alta en alumnado.")
 
 
-def menu_alumno(estudiante):
+def menu_alumno(estudiante: Estudiante):
     while True:
         print("\nMenú de Alumno:")
         print("1. Matricularse a un curso")
@@ -68,23 +49,23 @@ def menu_alumno(estudiante):
             print("Opción no válida. Ingrese una opción numérica")
 
 
-def matricular_alumno(estudiante):
+def matricular_alumno(estudiante : Estudiante):
     while True:
-        cursos_ordenados = sorted(cursos, key=lambda curso: curso.nombre)
+        cursos_ordenados = sorted(datos.cursos, key=lambda curso: curso.nombre)
         for indice, curso in enumerate(cursos_ordenados, 1):
             print(f"{indice} {curso.nombre}")
 
         opt = input("\nIngrese el curso: ")
         if opt.isnumeric():
             opt=int(opt)
-            if opt<=len(cursos):
-                if cursos_ordenados[opt-1].nombre in estudiante.cursos:
+            if opt<=len(datos.cursos):
+                if cursos_ordenados[opt-1].nombre in estudiante.mis_cursos:
                     print(f"Ya estás matriculado en {cursos_ordenados[opt-1].nombre}.")
                 else:
                     contrasenia = input(f"Ingrese contraseña para matricularse: ")
                     
                     if contrasenia == cursos_ordenados[opt-1].contrasenia_matriculacion:
-                        estudiante.cursos.append(cursos_ordenados[opt-1].nombre)
+                        estudiante.matricular_en_curso(cursos_ordenados[opt-1])
                         print("Se ha registrado correctamente su matriculación")
                     else:
                         print("Contraseña incorrecta")
@@ -95,20 +76,20 @@ def matricular_alumno(estudiante):
             print("Opción no válida. Ingrese una opción numérica")
 
 
-def desmatricular_alumno(estudiante):
-    if len(estudiante.cursos)==0:
+def desmatricular_alumno(estudiante : Estudiante):
+    if len(estudiante.mis_cursos)==0:
         print("Todavía no posee cursos matriculados.")
         return
     
     while True:
-        for indice, curso in enumerate(estudiante.cursos, 1):
+        for indice, curso in enumerate(estudiante.mis_cursos, 1):
             print(f"{indice} {curso}")
 
         opt = input("\nIngrese el curso: ")
         if opt.isnumeric():
             opt=int(opt)
-            if opt<=len(cursos):
-                estudiante.cursos.remove(estudiante.cursos[opt-1])
+            if opt<=len(datos.cursos):
+                estudiante.mis_cursos.remove(estudiante.mis_cursos[opt-1])
                 print("Se ha registrado correctamente su desmatriculación")
                 break
             else:
@@ -118,19 +99,21 @@ def desmatricular_alumno(estudiante):
 
 
 def cursos_alumno(estudiante):
-    if len(estudiante.cursos)==0:
+    if len(estudiante.mis_cursos)==0:
         print("Todavía no posee cursos matriculados.")
         return
     
     while True:
-        for indice, curso in enumerate(estudiante.cursos, 1):
+        for indice, curso in enumerate(estudiante.mis_cursos, 1):
             print(f"{indice} {curso}")
 
         opt = input("\nIngrese el curso: ")
         if opt.isnumeric():
             opt=int(opt)
-            if opt<=len(estudiante.cursos):
-                print(f"Nombre: {estudiante.cursos[opt-1]}")
+            if opt<=len(estudiante.mis_cursos):
+                print(f"Nombre: {estudiante.mis_cursos[opt-1]}")
+                for archivo in estudiante.mis_cursos[opt-1].archivos:
+                    print(archivo.__str__)
                 break
             else:
                 print("Opción no válida. Por favor, seleccione una opción válida.")
@@ -143,22 +126,31 @@ def validar_profesor():
     bandera=0    
     email = input("Ingrese su email: ")
 
-    for profesor in profesores:
+    for profesor in datos.profesores:
         if profesor.email == email:
             bandera=1
             contrasenia = input("Ingrese su contraseña: ")
-            if profesor.contrasenia == contrasenia:
+            if profesor.validar_credenciales(email, contrasenia):
                 print(f'Bienvenido/a {profesor.nombre}')
                 break
             else:
                 print("Error de ingreso. Contraseña inválida.")
             
     if bandera==0:
-        print("Correo electrónico no encontrado. Debe darse de alta en alumnado.")
+        print("Correo electrónico no encontrado")
+        while True:
+            opt = input("Ingrese código para registrarse: ")
+            if opt.lower() == "admin":
+                datos.profesores.append(Profesor.registrar(email))
+                break
+            
+            else:
+                print("Código Incorrecto, regresando al menu principal... ")
+                break
 
 
 def ver_cursos():
-    cursos_ordenados = sorted(cursos, key=lambda curso: curso.nombre)
+    cursos_ordenados = sorted(datos.cursos, key=lambda curso: curso.nombre)
     print("Cursos disponibles:")
     for curso in cursos_ordenados:
         materia = f"Materia: {curso.nombre}"
