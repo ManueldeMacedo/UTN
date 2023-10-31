@@ -28,7 +28,6 @@ class Profesor(Usuario):
     def mis_cursos(self) -> list:
         return self.__mis_cursos
     
-    @property
     def dictar_curso(self, curso: Curso):
         self.mis_cursos.append(curso)
     

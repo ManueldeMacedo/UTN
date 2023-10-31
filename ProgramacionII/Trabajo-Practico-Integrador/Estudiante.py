@@ -38,10 +38,8 @@ class Estudiante(Usuario):
     def __str__(self):
         return f"Estudiante: {self.nombre} {self.apellido} - Legajo: {self.legajo} - Año de inscripción: {self.anio_inscripcion_carrera}"
     
-    @property
     def matricular_en_curso(self, curso: Curso) -> None:
         self.__mis_cursos.append(curso)
 
-    @property
     def desmatricular_en_curso(self, curso: Curso) -> None:
         self.__mis_cursos.remove(curso)

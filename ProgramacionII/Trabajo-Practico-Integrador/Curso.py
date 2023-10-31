@@ -36,7 +36,6 @@ class Curso():
     def __str__(self) -> str:
         return f"Nombre del curso: {self.__nombre}"
     
-    @property
     def nuevo_archivo(self, archivo: Archivo) -> None:
         self.__archivos.append(archivo)
     

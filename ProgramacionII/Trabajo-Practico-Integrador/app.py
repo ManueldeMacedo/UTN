@@ -2,6 +2,7 @@ from Estudiante import *
 from Profesor import *
 from Usuario import *
 from Curso import *
+from Archivo import *
 import datos
 
 def validar_alumno():
@@ -83,13 +84,13 @@ def desmatricular_alumno(estudiante : Estudiante):
     
     while True:
         for indice, curso in enumerate(estudiante.mis_cursos, 1):
-            print(f"{indice} {curso}")
+            print(f"{indice} {curso.nombre}")
 
         opt = input("\nIngrese el curso: ")
         if opt.isnumeric():
             opt=int(opt)
             if opt<=len(datos.cursos):
-                estudiante.mis_cursos.remove(estudiante.mis_cursos[opt-1])
+                estudiante.desmatricular_en_curso(estudiante.mis_cursos[opt-1])
                 print("Se ha registrado correctamente su desmatriculación")
                 break
             else:
@@ -105,14 +106,15 @@ def cursos_alumno(estudiante):
     
     while True:
         for indice, curso in enumerate(estudiante.mis_cursos, 1):
-            print(f"{indice} {curso}")
+            print(f"{indice} {curso.nombre}")
 
         opt = input("\nIngrese el curso: ")
         if opt.isnumeric():
             opt=int(opt)
             if opt<=len(estudiante.mis_cursos):
-                print(f"Nombre: {estudiante.mis_cursos[opt-1]}")
-                for archivo in estudiante.mis_cursos[opt-1].archivos:
+                print(f"Nombre: {estudiante.mis_cursos[opt-1].nombre}")
+                archivos_ordenados = sorted(estudiante.mis_cursos[opt-1].archivos, key=lambda archivo: archivo.fecha)
+                for archivo in archivos_ordenados:
                     print(archivo.__str__)
                 break
             else:
@@ -137,7 +139,7 @@ def validar_profesor():
                 break
             else:
                 print("Error de ingreso. Contraseña inválida.")
-            
+
     if bandera==0:
         print("Correo electrónico no encontrado")
         while True:
@@ -151,7 +153,7 @@ def validar_profesor():
                 break
 
 
-def menu_profesor(profesor):
+def menu_profesor(profesor: Profesor):
     while True:
         print("\nMenú de Profesor:")
         print("1. Dictar un curso")
@@ -173,22 +175,23 @@ def menu_profesor(profesor):
         else:
             print("Opción no válida. Ingrese una opción numérica")
 
-def dictar_curso(profesor):
+def dictar_curso(profesor: Profesor):
      while True:
-        cursos_ordenados = sorted(cursos, key=lambda curso: curso.nombre)
+        cursos_ordenados = sorted(datos.cursos, key=lambda curso: curso.nombre)
         for indice, curso in enumerate(cursos_ordenados, 1):
             print(f"{indice} {curso.nombre}")
 
         opt = input("\nIngrese el curso: ")
         if opt.isnumeric():
             opt=int(opt)
-            if opt<=len(cursos):
-                if cursos_ordenados[opt-1].nombre in profesor.cursos:
+            if opt<=len(datos.cursos):
+                if cursos_ordenados[opt-1].nombre in profesor.mis_cursos:
                     print(f"Ya estás matriculado en {cursos_ordenados[opt-1].nombre}.")
                 else:
-                    profesor.cursos.append(cursos_ordenados[opt-1].nombre)
+                    profesor.dictar_curso(cursos_ordenados[opt-1])
                     print("Se ha registrado correctamente su matriculación")
                     print(f"Nombre: {cursos_ordenados[opt-1].nombre}")
+                    print(f"Código: {cursos_ordenados[opt-1].codigo}")
                     print(f"Contraseña: {cursos_ordenados[opt-1].contrasenia_matriculacion} ")
                 break
             else:
@@ -196,25 +199,32 @@ def dictar_curso(profesor):
         else:
             print("Opción no válida. Ingrese una opción numérica")
 
-def cursos_profesor(profesor):
+def cursos_profesor(profesor: Profesor):
     
-    if len(profesor.cursos)==0:
+    if len(profesor.mis_cursos)==0:
         print("Todavía no posee cursos matriculados.")
         return
     
     while True:
-        for indice, curso in enumerate(profesor.cursos, 1):
-            print(f"{indice} {curso}")
+        for indice, curso in enumerate(profesor.mis_cursos, 1):
+            print(f"{indice} {curso.nombre}")
 
         opt = input("\nIngrese el curso: ")
         if opt.isnumeric():
             opt=int(opt)
-            if opt<=len(profesor.cursos):
-                print(f"Nombre: {profesor.cursos[opt-1]}")
-                for curso in cursos:
-                    if profesor.cursos[opt-1] == curso.nombre:
-                         print(f"Contraseña: {curso.contrasenia_matriculacion} ")
+            if opt<=len(profesor.mis_cursos):
+                print(f"Nombre: {profesor.mis_cursos[opt-1].nombre}")
+                print(f"Código: {profesor.mis_cursos[opt-1].codigo}")
+                print(f"Contraseña: {profesor.mis_cursos[opt-1].contrasenia_matriculacion} ")
+                print(f"Cantidad de archivos: {len(profesor.mis_cursos[opt-1].archivos)} ")
 
+                files = input("\nDesea ingresar un nuevo archivo?: Si/No")
+                if files.upper()=="SI":
+                    file_name = input("\nIngrese el nombre del archivo: ")
+                    file_format = input("\nIngrese el formato del archivo: ")
+                    archivo_new=Archivo(file_name, file_format)
+                    profesor.mis_cursos[opt-1].nuevo_archivo(archivo_new)
+                    print("Su archivo fue cargado exitosamente.")
 
                 break
             else:

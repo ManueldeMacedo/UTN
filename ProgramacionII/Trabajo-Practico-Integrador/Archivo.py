@@ -34,4 +34,4 @@ class Archivo():
 
     @property
     def __str__(self) -> str:
-        return f"Archivo: {self.nombre}"
+        return f"Archivo: {self.nombre}{self.formato}"
