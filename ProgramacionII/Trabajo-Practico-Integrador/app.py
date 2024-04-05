@@ -60,8 +60,10 @@ def matricular_alumno(estudiante : Estudiante):
         if opt.isnumeric():
             opt=int(opt)
             if opt<=len(datos.cursos):
-                if cursos_ordenados[opt-1].nombre in estudiante.mis_cursos:
-                    print(f"Ya estás matriculado en {cursos_ordenados[opt-1].nombre}.")
+                nombre_curso = cursos_ordenados[opt-1].nombre
+
+                if esta_matriculado(estudiante, nombre_curso):
+                    print(f"Ya estás matriculado en {nombre_curso}")
                 else:
                     contrasenia = input(f"Ingrese contraseña para matricularse: ")
                     
@@ -185,8 +187,9 @@ def dictar_curso(profesor: Profesor):
         if opt.isnumeric():
             opt=int(opt)
             if opt<=len(datos.cursos):
-                if cursos_ordenados[opt-1].nombre in profesor.mis_cursos:
-                    print(f"Ya estás matriculado en {cursos_ordenados[opt-1].nombre}.")
+                nombre_curso = cursos_ordenados[opt-1].nombre
+                if esta_matriculado(profesor, nombre_curso):
+                    print(f"Ya estás matriculado en {nombre_curso}")
                 else:
                     profesor.dictar_curso(cursos_ordenados[opt-1])
                     print("Se ha registrado correctamente su matriculación")
@@ -242,6 +245,12 @@ def ver_cursos():
         carrera = f"Carrera: Tecnicatura Universitaria en Programación"
         espacio_en_blanco = 20 - len(curso.nombre)
         print(f"{materia}{espacio_en_blanco * ' '}{carrera}")
+
+def esta_matriculado(estudiante, nombre_curso):
+    return nombre_curso in [curso.nombre for curso in estudiante.mis_cursos]
+
+def esta_matriculado(profesor, nombre_curso):
+    return nombre_curso in [curso.nombre for curso in profesor.mis_cursos]
 
 
 def main_menu():
