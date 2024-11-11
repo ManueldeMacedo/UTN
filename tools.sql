@@ -43,3 +43,8 @@ create TEMPORARY TABLE fechas (select nom_plan, max(fecha_desde_plan) as fecha f
 
  set @ult_id=last_insert_id();
 select @ult_id;
+
+
+INSERT INTO localidades (localidad) VALUES ("Rosario"), ("Villa Gobernador Gálvez"), ("Funes");
+
+UPDATE participantes SET localidad=(SELECT id FROM localidades WHERE localidad="Rosario");
