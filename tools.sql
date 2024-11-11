@@ -48,3 +48,14 @@ select @ult_id;
 INSERT INTO localidades (localidad) VALUES ("Rosario"), ("Villa Gobernador Gálvez"), ("Funes");
 
 UPDATE participantes SET localidad=(SELECT id FROM localidades WHERE localidad="Rosario");
+
+
+INNER JOIN insccats IC ON IC.inscripcion_id=I.id
+INNER JOIN categorias C ON IC.categoria_id=C.id
+INNER JOIN recorridos R on C.recorrido_id=R.id
+
+FROM participantes P 
+INNER JOIN inscripciones I ON P.id=I.participante_id
+LEFT JOIN tiempos T ON I.id=T.inscripcion_id
+INNER JOIN recorridos R ON I.recorrido_id=R.id
+INNER JOIN maratones M ON R.maraton_id=M.id
